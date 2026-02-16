@@ -67,3 +67,6 @@ RUN echo "pcm.!default { type hw card 0 }" > /etc/asound.conf
 ENV SDL_AUDIODRIVER=dummy
 ENV XDG_RUNTIME_DIR=/tmp/runtime-root
 RUN mkdir -p $XDG_RUNTIME_DIR
+
+# Copy cpp-language-feature-check scripts
+COPY external/cpp-language-feature-check/src/ /scripts/
