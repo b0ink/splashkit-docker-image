@@ -31,6 +31,7 @@ RUN apt-get update && \
     build-essential \
     fonts-dejavu-core \
     clang \
+    clang-tools \
     ca-certificates \
     sudo && \
     ln -s /usr/bin/python3 /usr/bin/python
