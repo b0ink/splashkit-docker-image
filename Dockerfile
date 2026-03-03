@@ -34,18 +34,19 @@ RUN apt-get update && \
     clang-tools \
     ca-certificates \
     sudo && \
-    ln -s /usr/bin/python3 /usr/bin/python
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 
 # Install .NET
-RUN curl -L https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -o packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm packages-microsoft-prod.deb
+# RUN curl -L https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -o packages-microsoft-prod.deb && \
+#     dpkg -i packages-microsoft-prod.deb && \
+#     rm packages-microsoft-prod.deb
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    dotnet-sdk-10.0 && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#     dotnet-sdk-10.0 && \
+#     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install SplashKit
 RUN curl -s https://raw.githubusercontent.com/splashkit/skm/master/install-scripts/skm-install.sh | bash
@@ -53,15 +54,15 @@ ENV PATH="/root/.splashkit:${PATH}"
 RUN skm linux install
 
 # Pre-cache the SplashKit nuget package
-RUN mkdir -p /nuget-local
-RUN dotnet new console -n tmp && \
-    cd tmp && \
-    dotnet add package SplashKit --package-directory /nuget-local && \
-    cd .. && \
-    rm -rf tmp
-RUN dotnet nuget add source /nuget-local -n splashkit-local
+# RUN mkdir -p /nuget-local
+# RUN dotnet new console -n tmp && \
+#     cd tmp && \
+#     dotnet add package SplashKit --package-directory /nuget-local && \
+#     cd .. && \
+#     rm -rf tmp
+# RUN dotnet nuget add source /nuget-local -n splashkit-local
 
-ENV DOTNET_RESTORE_SOURCES="/nuget-local"
+# ENV DOTNET_RESTORE_SOURCES="/nuget-local"
 
 # Suppress audio/display warnings for headless SplashKit
 RUN echo "pcm.!default { type hw card 0 }" > /etc/asound.conf
