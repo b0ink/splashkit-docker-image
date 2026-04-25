@@ -1,7 +1,23 @@
 name: deployment
+run-name: "Deploy ${{ github.event.inputs.tag }}${{ github.event.inputs.push_latest == 'true' && ' (+latest)' || '' }}"
 
 on:
     workflow_dispatch:
+        inputs:
+            tag:
+                description: "Docker tag (e.g. v1.0.0)"
+                required: true
+                type: string
+            push_latest:
+                description: "Also push :latest"
+                required: false
+                default: false
+                type: boolean
+            use_cache_from:
+                description: "Use previous GHA cache (cache-from)"
+                required: false
+                default: true
+                type: boolean
 
 jobs:
     docker:
@@ -27,7 +43,9 @@ jobs:
                   context: .
                   push: true
                   platforms: linux/amd64,linux/arm64
-                  tags: ${{ secrets.DOCKERHUB_USERNAME }}/splashkit:latest
+                  tags: |
+                      ${{ secrets.DOCKERHUB_USERNAME }}/splashkit:${{ inputs.tag }}
+                      ${{ inputs.push_latest && format('{0}/splashkit:latest', secrets.DOCKERHUB_USERNAME) || '' }}
                   no-cache: true
-                  # cache-from: type=gha
-                  # cache-to: type=gha,mode=max
+                  cache-to: type=gha,mode=max
+                  cache-from: ${{ inputs.use_cache_from && 'type=gha' || '' }}
